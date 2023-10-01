@@ -4,22 +4,10 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "key", schema = "public", catalog = "dict")
-public class KeyEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
-    private Object id;
+public class KeyEntity extends BaseEntity{
     @Basic
     @Column(name = "name")
     private String name;
-
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

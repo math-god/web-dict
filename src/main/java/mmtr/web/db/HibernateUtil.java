@@ -6,7 +6,9 @@ import mmtr.web.db.entity.TypeEntity;
 import mmtr.web.db.entity.ValueEntity;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.springframework.stereotype.Component;
 
+@Component
 public class HibernateUtil {
     private static final SessionFactory sessionFactory = buildSessionFactory();
 

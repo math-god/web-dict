@@ -2,52 +2,42 @@ package mmtr.web.db.entity;
 
 import jakarta.persistence.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "entry", schema = "public", catalog = "dict")
-public class EntryEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
-    private Object id;
+public class EntryEntity extends BaseEntity{
     @Basic
     @Column(name = "key_id")
-    private Object keyId;
+    private UUID keyId;
     @Basic
     @Column(name = "value_id")
-    private Object valueId;
+    private UUID valueId;
     @Basic
     @Column(name = "type_id")
-    private Object typeId;
+    private UUID typeId;
 
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
-
-    public Object getKeyId() {
+    public UUID getKeyId() {
         return keyId;
     }
 
-    public void setKeyId(Object keyId) {
+    public void setKeyId(UUID keyId) {
         this.keyId = keyId;
     }
 
-    public Object getValueId() {
+    public UUID getValueId() {
         return valueId;
     }
 
-    public void setValueId(Object valueId) {
+    public void setValueId(UUID valueId) {
         this.valueId = valueId;
     }
 
-    public Object getTypeId() {
+    public UUID getTypeId() {
         return typeId;
     }
 
-    public void setTypeId(Object typeId) {
+    public void setTypeId(UUID typeId) {
         this.typeId = typeId;
     }
 

@@ -1,25 +1,16 @@
 package mmtr.web.db.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "type", schema = "public", catalog = "dict")
-public class TypeEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
-    private Object id;
+public class TypeEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
-
-    public Object getId() {
-        return id;
-    }
-
-    public void setId(Object id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
