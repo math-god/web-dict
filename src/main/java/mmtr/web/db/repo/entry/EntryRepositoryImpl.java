@@ -5,11 +5,13 @@ import mmtr.web.db.entity.EntryEntity;
 import mmtr.web.db.repo.base.CrudRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 
 import java.rmi.server.UID;
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public class EntryRepositoryImpl extends CrudRepository<EntryEntity> implements EntryRepository {
 
     private SessionFactory sessionFactory;
