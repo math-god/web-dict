@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public class CrudRepository<TModel extends BaseEntity> {
-
+public class CrudRepository implements BaseRepository {
     private SessionFactory sessionFactory;
 
     public CrudRepository() {
         this.sessionFactory = HibernateUtil.getSessionFactory();
     }
 
-    public TModel create(TModel model) {
+    @Override
+    public <TModel extends BaseEntity> TModel create(TModel model) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
@@ -28,8 +28,8 @@ public class CrudRepository<TModel extends BaseEntity> {
         return model;
     }
 
-
-    public TModel update(TModel model) {
+    @Override
+    public <TModel extends BaseEntity> TModel update(TModel model) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
@@ -40,25 +40,24 @@ public class CrudRepository<TModel extends BaseEntity> {
         return model;
     }
 
-
-    public TModel getById(UUID id) {
+    @Override
+    public <TModel extends BaseEntity> TModel getById(Class<TModel> modelClass, UUID id) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
-        BaseEntity result = session.find(BaseEntity.class, id);
-
-        TModel model = (TModel) result;
+        TModel model = session.find(modelClass, id);
 
         session.getTransaction().commit();
 
         return model;
     }
 
-    public TModel deleteById(UUID id) {
+    @Override
+    public <TModel extends BaseEntity> TModel deleteById(Class<TModel> modelClass, UUID id) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
-        TModel model = getById(id);
+        TModel model = getById(modelClass, id);
         session.remove(model);
 
         session.getTransaction().commit();

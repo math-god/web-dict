@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class EntryRepositoryImpl extends CrudRepository<EntryEntity> implements EntryRepository {
+public class EntryRepositoryImpl implements EntryRepository {
 
     private SessionFactory sessionFactory;
 

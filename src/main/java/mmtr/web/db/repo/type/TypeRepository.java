@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface TypeRepository extends BaseRepository<TypeEntity> {
+public interface TypeRepository {
     List<TypeEntity> getAllTypes();
 }

@@ -5,6 +5,6 @@ import mmtr.web.db.repo.base.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class KeyRepositoryImpl extends CrudRepository<KeyEntity> implements KeyRepository {
+public class KeyRepositoryImpl  implements KeyRepository {
 
 }

@@ -1,8 +1,10 @@
 package mmtr.web.common;
 
+import java.util.List;
+
 public class EntryDto {
     private String key;
-    private String values;
+    private List<String> values;
     private String type;
 
     public String getKey() {
@@ -13,11 +15,11 @@ public class EntryDto {
         this.key = key;
     }
 
-    public String getValues() {
+    public List<String> getValues() {
         return values;
     }
 
-    public void setValues(String values) {
+    public void setValues(List<String> values) {
         this.values = values;
     }
 

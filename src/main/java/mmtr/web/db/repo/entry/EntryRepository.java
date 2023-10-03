@@ -5,7 +5,7 @@ import mmtr.web.db.repo.base.BaseRepository;
 
 import java.util.List;
 
-public interface EntryRepository extends BaseRepository<EntryEntity> {
+public interface EntryRepository {
     List<EntryEntity> getEntriesByType(String type);
 
     List<EntryEntity> getEntriesByKey(String key);

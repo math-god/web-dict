@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class TypeRepositoryImpl extends CrudRepository<TypeEntity> implements TypeRepository {
+public class TypeRepositoryImpl implements TypeRepository {
 
     private SessionFactory sessionFactory;
 
