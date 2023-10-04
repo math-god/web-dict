@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Entry page</title>
+</head>
+<body th:each="tableContent : ${tableData}">
+<p th:text="${tableContent.getKey()}"></p>
+
+<table>
+    <tr>
+        <th>key</th>
+        <th>values</th>
+    </tr>
+
+    <tr th:each="tableRow : ${tableContent.getValue()}">
+        <td th:text="${tableRow.getKey()}"></td>
+        <td>
+            <table>
+                <tr th:each="values : ${tableRow.getValue()}">
+                    <td th:text="${values}"></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

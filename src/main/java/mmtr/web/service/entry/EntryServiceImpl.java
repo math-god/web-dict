@@ -13,9 +13,7 @@ import mmtr.web.db.repo.value.ValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,28 +36,26 @@ public class EntryServiceImpl implements EntryService {
     }
 
     @Override
-    public List<EntryDto> getEntriesByType(String type) {
+    public HashMap<String, HashMap<String, List<String>>> getDataInTableFormat(String type) {
         List<EntryEntity> entryEntities = entryRepository.getEntriesByType(type);
 
         if (entryEntities == null)
             return null;
 
-        List<EntryDto> entryDtos = new ArrayList<>();
+        HashSet<UUID> keys = new HashSet<>();
+        for (EntryEntity item : entryEntities)
+            keys.add(item.getKeyId());
 
-        for (EntryEntity entryEntity : entryEntities) {
-            EntryDto entryDto = new EntryDto();
+        HashMap<String, HashMap<String, List<String>>> tableData = new HashMap<>();
+        HashMap<String, List<String>> pairs = new HashMap<>();
 
-            entryDto.setKey(baseRepository.getById(KeyEntity.class, entryEntity.getKeyId()).getName());
-            entryDto.setValues(fromValueListToStringList(valueRepository.getValuesByKeyId(entryEntity.getKeyId())));
-            entryDto.setType(baseRepository.getById(TypeEntity.class, entryEntity.getTypeId()).getName());
+        for (UUID key : keys)
+            pairs.put(baseRepository.getById(KeyEntity.class, key).getName(),
+                    fromValueListToStringList(valueRepository.getValuesByKeyId(key)));
 
-            entryDtos.add(entryDto);
-        }
+        tableData.put(type, pairs);
 
-        Map<String, List<EntryDto>> map = entryDtos.stream()
-                .collect(Collectors.groupingBy(EntryDto::getKey));
-
-        return entryDtos;
+        return tableData;
     }
 
     private List<String> fromValueListToStringList(List<ValueEntity> list) {

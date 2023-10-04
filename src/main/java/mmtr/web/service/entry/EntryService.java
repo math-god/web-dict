@@ -1,9 +1,8 @@
 package mmtr.web.service.entry;
 
-import mmtr.web.common.EntryDto;
-
+import java.util.HashMap;
 import java.util.List;
 
 public interface EntryService {
-    List<EntryDto> getEntriesByType(String type);
+    HashMap<String, HashMap<String, List<String>>> getDataInTableFormat(String type);
 }
