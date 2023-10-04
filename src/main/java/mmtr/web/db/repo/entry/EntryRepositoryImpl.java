@@ -20,13 +20,10 @@ public class EntryRepositoryImpl implements EntryRepository {
 
     //TODO Сделать провеку типа словаря
     @Override
-    public List<EntryEntity> getEntriesByType(String type) {
+    public List<EntryEntity> getEntriesByTypeId(UUID typeId) {
         Session session = sessionFactory.openSession();
 
         session.beginTransaction();
-        UUID typeId = (UUID) session.createQuery("select id from TypeEntity where name = :type")
-                .setParameter("type", type)
-                .getSingleResult();
 
         List<EntryEntity> result = session.createQuery("from EntryEntity where typeId = :typeId", EntryEntity.class)
                 .setParameter("typeId", typeId)
@@ -36,12 +33,12 @@ public class EntryRepositoryImpl implements EntryRepository {
     }
 
     @Override
-    public List<EntryEntity> getEntriesByKey(String key) {
+    public List<EntryEntity> getEntriesByKeyId(UUID keyId) {
         return null;
     }
 
     @Override
-    public List<EntryEntity> getEntriesByValue(String value) {
+    public List<EntryEntity> getEntriesByValueId(UUID valueId) {
         return null;
     }
 }

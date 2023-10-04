@@ -1,61 +1,85 @@
 package mmtr.web.service.entry;
 
-import mmtr.web.common.EntryDto;
+import mmtr.web.common.AddEntryDto;
 import mmtr.web.db.entity.EntryEntity;
 import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
 import mmtr.web.db.entity.ValueEntity;
 import mmtr.web.db.repo.base.BaseRepository;
 import mmtr.web.db.repo.entry.EntryRepository;
-import mmtr.web.db.repo.key.KeyRepository;
 import mmtr.web.db.repo.type.TypeRepository;
 import mmtr.web.db.repo.value.ValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class EntryServiceImpl implements EntryService {
 
     private EntryRepository entryRepository;
-    private KeyRepository keyRepository;
     private ValueRepository valueRepository;
-    private TypeRepository typeRepository;
     private BaseRepository baseRepository;
+    private TypeRepository typeRepository;
 
     @Autowired
-    public EntryServiceImpl(EntryRepository entryRepository, KeyRepository keyRepository,
-                            ValueRepository valueRepository, TypeRepository typeRepository, BaseRepository baseRepository) {
+    public EntryServiceImpl(EntryRepository entryRepository, ValueRepository valueRepository, BaseRepository baseRepository, TypeRepository typeRepository) {
         this.entryRepository = entryRepository;
-        this.keyRepository = keyRepository;
         this.valueRepository = valueRepository;
-        this.typeRepository = typeRepository;
         this.baseRepository = baseRepository;
+        this.typeRepository = typeRepository;
     }
 
     @Override
-    public HashMap<String, HashMap<String, List<String>>> getDataInTableFormat(String type) {
-        List<EntryEntity> entryEntities = entryRepository.getEntriesByType(type);
+    public HashMap<TypeEntity, HashMap<KeyEntity, List<ValueEntity>>> getDataInTableFormat(UUID typeId) {
+        List<EntryEntity> entryEntities = entryRepository.getEntriesByTypeId(typeId);
 
         if (entryEntities == null)
             return null;
 
-        HashSet<UUID> keys = new HashSet<>();
-        for (EntryEntity item : entryEntities)
-            keys.add(item.getKeyId());
+        HashMap<TypeEntity, HashMap<KeyEntity, List<ValueEntity>>> tableData = new HashMap<>();
+        HashMap<KeyEntity, List<ValueEntity>> pairs = new HashMap<>();
 
-        HashMap<String, HashMap<String, List<String>>> tableData = new HashMap<>();
-        HashMap<String, List<String>> pairs = new HashMap<>();
+        for (EntryEntity entryEntity : entryEntities) {
+            pairs.put(baseRepository.getById(KeyEntity.class, entryEntity.getKeyId()),
+                    valueRepository.getValuesByKeyId(entryEntity.getKeyId()));
+        }
 
-        for (UUID key : keys)
-            pairs.put(baseRepository.getById(KeyEntity.class, key).getName(),
-                    fromValueListToStringList(valueRepository.getValuesByKeyId(key)));
-
-        tableData.put(type, pairs);
+        tableData.put(baseRepository.getById(TypeEntity.class, typeId), pairs);
 
         return tableData;
+    }
+
+    @Override
+    public boolean addEntry(AddEntryDto addEntryDto) {
+        if (!addEntryDto.getKey().matches(baseRepository.getById(TypeEntity.class, addEntryDto.getTypeId()).getRegex()))
+            return false;
+
+
+        KeyEntity keyEntity = new KeyEntity();
+        keyEntity.setName(addEntryDto.getKey());
+        KeyEntity resultKeyEntity = baseRepository.create(keyEntity);
+
+        List<ValueEntity> resultValueEntities = new ArrayList<>();
+        for (String value : addEntryDto.getValues()) {
+            ValueEntity valueEntity = new ValueEntity();
+            valueEntity.setName(value);
+            ValueEntity resultValueEntity = baseRepository.create(valueEntity);
+            resultValueEntities.add(resultValueEntity);
+        }
+
+        for (ValueEntity valueEntity : resultValueEntities) {
+            EntryEntity entryEntity = new EntryEntity();
+            entryEntity.setKeyId(resultKeyEntity.getId());
+            entryEntity.setValueId(valueEntity.getId());
+            entryEntity.setTypeId(addEntryDto.getTypeId());
+            baseRepository.create(entryEntity);
+        }
+
+        return true;
     }
 
     private List<String> fromValueListToStringList(List<ValueEntity> list) {

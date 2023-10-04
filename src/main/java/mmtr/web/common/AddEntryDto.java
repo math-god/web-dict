@@ -1,11 +1,12 @@
 package mmtr.web.common;
 
 import java.util.List;
+import java.util.UUID;
 
-public class EntryDto {
+public class AddEntryDto {
     private String key;
     private List<String> values;
-    private String type;
+    private UUID typeId;
 
     public String getKey() {
         return key;
@@ -23,11 +24,11 @@ public class EntryDto {
         this.values = values;
     }
 
-    public String getType() {
-        return type;
+    public UUID getTypeId() {
+        return typeId;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeId(UUID typeId) {
+        this.typeId = typeId;
     }
 }

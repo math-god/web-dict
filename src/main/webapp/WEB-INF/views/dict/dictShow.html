@@ -5,7 +5,7 @@
     <title>Entry page</title>
 </head>
 <body th:each="tableContent : ${tableData}">
-<p th:text="${tableContent.getKey()}"></p>
+<p th:text="${tableContent.getKey().getName()}"></p>
 
 <table>
     <tr>
@@ -14,11 +14,11 @@
     </tr>
 
     <tr th:each="tableRow : ${tableContent.getValue()}">
-        <td th:text="${tableRow.getKey()}"></td>
+        <td th:text="${tableRow.getKey().getName()}"></td>
         <td>
             <table>
                 <tr th:each="values : ${tableRow.getValue()}">
-                    <td th:text="${values}"></td>
+                    <td th:text="${values.getName()}"></td>
                 </tr>
             </table>
         </td>

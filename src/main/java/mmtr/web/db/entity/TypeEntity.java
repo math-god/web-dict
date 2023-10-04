@@ -11,6 +11,7 @@ public class TypeEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
+    private String regex;
 
     public String getName() {
         return name;
@@ -18,6 +19,14 @@ public class TypeEntity extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRegex() {
+        return regex;
+    }
+
+    public void setRegex(String regex) {
+        this.regex = regex;
     }
 
     @Override
