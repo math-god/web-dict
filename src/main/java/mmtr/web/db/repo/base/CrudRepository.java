@@ -24,6 +24,7 @@ public class CrudRepository implements BaseRepository {
         session.persist(model);
 
         session.getTransaction().commit();
+        session.close();
 
         return model;
     }
@@ -36,6 +37,7 @@ public class CrudRepository implements BaseRepository {
         session.merge(model);
 
         session.getTransaction().commit();
+        session.close();
 
         return model;
     }
@@ -48,6 +50,7 @@ public class CrudRepository implements BaseRepository {
         TModel model = session.find(modelClass, id);
 
         session.getTransaction().commit();
+        session.close();
 
         return model;
     }
@@ -61,6 +64,7 @@ public class CrudRepository implements BaseRepository {
         session.remove(model);
 
         session.getTransaction().commit();
+        session.close();
 
         return model;
     }

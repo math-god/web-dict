@@ -1,6 +1,7 @@
 package mmtr.web.service.entry;
 
 import mmtr.web.common.AddEntryDto;
+import mmtr.web.common.GetEntriesDto;
 import mmtr.web.db.entity.EntryEntity;
 import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
@@ -9,13 +10,12 @@ import mmtr.web.db.repo.base.BaseRepository;
 import mmtr.web.db.repo.entry.EntryRepository;
 import mmtr.web.db.repo.type.TypeRepository;
 import mmtr.web.db.repo.value.ValueRepository;
+import mmtr.web.service.key.KeyService;
+import mmtr.web.service.value.ValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class EntryServiceImpl implements EntryService {
@@ -24,51 +24,80 @@ public class EntryServiceImpl implements EntryService {
     private ValueRepository valueRepository;
     private BaseRepository baseRepository;
     private TypeRepository typeRepository;
+    private KeyService keyService;
+    private ValueService valueService;
 
     @Autowired
-    public EntryServiceImpl(EntryRepository entryRepository, ValueRepository valueRepository, BaseRepository baseRepository, TypeRepository typeRepository) {
+    public EntryServiceImpl(EntryRepository entryRepository, ValueRepository valueRepository, BaseRepository baseRepository, TypeRepository typeRepository, KeyService keyService, ValueService valueService) {
         this.entryRepository = entryRepository;
         this.valueRepository = valueRepository;
         this.baseRepository = baseRepository;
         this.typeRepository = typeRepository;
+        this.keyService = keyService;
+        this.valueService = valueService;
     }
 
     @Override
-    public HashMap<TypeEntity, HashMap<KeyEntity, List<ValueEntity>>> getDataInTableFormat(UUID typeId) {
+    public GetEntriesDto getEntriesByTypeId(UUID typeId) {
         List<EntryEntity> entryEntities = entryRepository.getEntriesByTypeId(typeId);
 
         if (entryEntities == null)
             return null;
 
-        HashMap<TypeEntity, HashMap<KeyEntity, List<ValueEntity>>> tableData = new HashMap<>();
         HashMap<KeyEntity, List<ValueEntity>> pairs = new HashMap<>();
-
         for (EntryEntity entryEntity : entryEntities) {
             pairs.put(baseRepository.getById(KeyEntity.class, entryEntity.getKeyId()),
                     valueRepository.getValuesByKeyId(entryEntity.getKeyId()));
         }
 
-        tableData.put(baseRepository.getById(TypeEntity.class, typeId), pairs);
+        GetEntriesDto getEntriesDto = new GetEntriesDto();
 
-        return tableData;
+        getEntriesDto.setTypeEntity(baseRepository.getById(TypeEntity.class, typeId));
+        getEntriesDto.setPairs(pairs);
+
+        return getEntriesDto;
+    }
+
+    @Override
+    public GetEntriesDto getEntriesByKeyIdAndTypeId(UUID keyId, UUID typeId) {
+        GetEntriesDto getEntriesDto = getEntriesByTypeId(typeId);
+
+        HashMap<KeyEntity, List<ValueEntity>> pairs = new HashMap<>();
+        for (Map.Entry<KeyEntity, List<ValueEntity>> pair : getEntriesDto.getPairs().entrySet()) {
+            if (pair.getKey().getId().equals(keyId))
+                pairs.put(pair.getKey(), pair.getValue());
+        }
+        GetEntriesDto result = new GetEntriesDto();
+        result.setTypeEntity(getEntriesDto.getTypeEntity());
+        result.setPairs(pairs);
+
+        return result;
+    }
+
+    @Override
+    public List<GetEntriesDto> getEntriesByKeyId(UUID keyId) {
+        return null;
+    }
+
+    @Override
+    public GetEntriesDto getEntriesByValueIdAndTypeId(UUID valueId, UUID typeId) {
+        return null;
+    }
+
+    @Override
+    public List<GetEntriesDto> getEntriesByValueId(UUID valueId) {
+        return null;
     }
 
     @Override
     public boolean addEntry(AddEntryDto addEntryDto) {
-        if (!addEntryDto.getKey().matches(baseRepository.getById(TypeEntity.class, addEntryDto.getTypeId()).getRegex()))
+        KeyEntity resultKeyEntity = keyService.addKey(addEntryDto.getKey(), addEntryDto.getTypeId());
+        if (resultKeyEntity == null)
             return false;
 
-
-        KeyEntity keyEntity = new KeyEntity();
-        keyEntity.setName(addEntryDto.getKey());
-        KeyEntity resultKeyEntity = baseRepository.create(keyEntity);
-
         List<ValueEntity> resultValueEntities = new ArrayList<>();
-        for (String value : addEntryDto.getValues()) {
-            ValueEntity valueEntity = new ValueEntity();
-            valueEntity.setName(value);
-            ValueEntity resultValueEntity = baseRepository.create(valueEntity);
-            resultValueEntities.add(resultValueEntity);
+        for (String valueName : addEntryDto.getValues()) {
+            resultValueEntities.add(valueService.addValue(valueName));
         }
 
         for (ValueEntity valueEntity : resultValueEntities) {
@@ -80,15 +109,5 @@ public class EntryServiceImpl implements EntryService {
         }
 
         return true;
-    }
-
-    private List<String> fromValueListToStringList(List<ValueEntity> list) {
-        List<String> stringList = new ArrayList<>();
-
-        for (ValueEntity item : list) {
-            stringList.add(item.getName());
-        }
-
-        return stringList;
     }
 }

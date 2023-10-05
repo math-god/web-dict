@@ -24,6 +24,9 @@ public class TypeRepositoryImpl implements TypeRepository {
         session.beginTransaction();
         List<TypeEntity> types = session.createQuery("from TypeEntity", TypeEntity.class).getResultList();
 
+        session.getTransaction().commit();
+        session.close();
+
         return types;
     }
 }

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <title>Entry page</title>
 </head>
-<body th:each="tableContent : ${tableData}">
-<p th:text="${tableContent.getKey().getName()}"></p>
+<body>
+<p th:text="${tableData.getTypeEntity().getName()}"></p>
 
 <table>
     <tr>
@@ -13,7 +13,7 @@
         <th>values</th>
     </tr>
 
-    <tr th:each="tableRow : ${tableContent.getValue()}">
+    <tr th:each="tableRow : ${tableData.getPairs()}">
         <td th:text="${tableRow.getKey().getName()}"></td>
         <td>
             <table>

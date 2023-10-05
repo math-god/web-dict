@@ -29,6 +29,9 @@ public class ValueRepositoryImpl implements ValueRepository {
                 .setParameter("keyId", keyId)
                 .getResultList();
 
+        session.getTransaction().commit();
+        session.close();
+
         return result;
     }
 }

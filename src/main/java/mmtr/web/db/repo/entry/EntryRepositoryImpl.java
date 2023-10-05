@@ -22,12 +22,14 @@ public class EntryRepositoryImpl implements EntryRepository {
     @Override
     public List<EntryEntity> getEntriesByTypeId(UUID typeId) {
         Session session = sessionFactory.openSession();
-
         session.beginTransaction();
 
         List<EntryEntity> result = session.createQuery("from EntryEntity where typeId = :typeId", EntryEntity.class)
                 .setParameter("typeId", typeId)
                 .getResultList();
+
+        session.getTransaction().commit();
+        session.close();
 
         return result;
     }
