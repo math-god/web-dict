@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -67,5 +68,18 @@ public class CrudRepository implements BaseRepository {
         session.close();
 
         return model;
+    }
+
+    @Override
+    public <TModel extends BaseEntity> List<TModel> getListByQuery(Class<TModel> modelClass, String query) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        List<TModel> models = session.createQuery(query, modelClass).getResultList();
+
+        session.getTransaction().commit();
+        session.close();
+
+        return models;
     }
 }

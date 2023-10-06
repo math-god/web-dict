@@ -19,12 +19,7 @@ public class TypeServiceImpl implements TypeService {
     }
 
     @Override
-    public List<String> getTypes() {
-        List<String> names = new ArrayList<>();
-
-        for (TypeEntity typeEntity : typeRepository.getAllTypes())
-            names.add(typeEntity.getName());
-
-        return names;
+    public List<TypeEntity> getTypes() {
+        return typeRepository.getAllTypes();
     }
 }

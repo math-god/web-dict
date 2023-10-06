@@ -6,6 +6,7 @@ import mmtr.web.db.repo.base.BaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.util.UUID;
 
 @Service
@@ -39,5 +40,10 @@ public class KeyServiceImpl implements KeyService {
         keyEntity.setName(keyName);
 
         return baseRepository.update(keyEntity);
+    }
+
+    @Override
+    public KeyEntity deleteKey(UUID keyId) {
+        return baseRepository.deleteById(KeyEntity.class, keyId);
     }
 }

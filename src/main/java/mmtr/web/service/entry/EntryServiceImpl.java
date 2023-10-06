@@ -67,6 +67,7 @@ public class EntryServiceImpl implements EntryService {
             if (pair.getKey().getId().equals(keyId))
                 pairs.put(pair.getKey(), pair.getValue());
         }
+
         GetEntriesDto result = new GetEntriesDto();
         result.setTypeEntity(getEntriesDto.getTypeEntity());
         result.setPairs(pairs);

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/dictShow/getDictionaryByType}" method="get">
+    <select class="form-control" id="typeId" name="typeId">
+        <option th:each="type : ${dictTypes}"
+                th:value="${type.getId()}"
+                th:text="${type.getName()}">
+        </option>
+    </select>
+    <button type="submit">Show</button>
+</form>
+</body>
+</html>

@@ -33,14 +33,4 @@ public class EntryRepositoryImpl implements EntryRepository {
 
         return result;
     }
-
-    @Override
-    public List<EntryEntity> getEntriesByKeyId(UUID keyId) {
-        return null;
-    }
-
-    @Override
-    public List<EntryEntity> getEntriesByValueId(UUID valueId) {
-        return null;
-    }
 }

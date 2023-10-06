@@ -8,7 +8,4 @@ import java.util.function.Predicate;
 
 public interface EntryRepository {
     List<EntryEntity> getEntriesByTypeId(UUID typeId);
-
-    //TODO !!!
-    List<EntryEntity> getEntriesByQuery();
 }

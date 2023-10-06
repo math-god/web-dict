@@ -32,6 +32,7 @@ public class DictionaryShowingController {
         GetEntriesDto tableData = entryService.getEntriesByTypeId(typeID);
 
         model.addAttribute("tableData", tableData);
+        showAllTypes(model);
 
         return "dict/dictShow";
     }
@@ -49,12 +50,8 @@ public class DictionaryShowingController {
 
     @GetMapping("/getTypes")
     public String showAllTypes(Model model) {
-        List<String> typeList = new ArrayList<>();
+        model.addAttribute("dictTypes", typeService.getTypes());
 
-        typeList.addAll(typeService.getTypes());
-
-        model.addAttribute("dictTypes", typeList);
-
-        return "dict/dictSelection";
+        return "dict/dictShow";
     }
 }

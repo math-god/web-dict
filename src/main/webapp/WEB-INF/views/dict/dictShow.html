@@ -5,6 +5,17 @@
     <title>Entry page</title>
 </head>
 <body>
+<form th:action="@{/dictShow/getDictionaryByType}" method="get">
+    <select class="form-control" id="typeId" name="typeId">
+        <option th:each="type : ${dictTypes}"
+                th:value="${type.getId()}"
+                th:text="${type.getName()}">
+        </option>
+    </select>
+    <button type="submit">Show</button>
+</form>
+<br>
+
 <p th:text="${tableData.getTypeEntity().getName()}"></p>
 
 <table>

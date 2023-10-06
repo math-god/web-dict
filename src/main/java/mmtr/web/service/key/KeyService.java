@@ -8,4 +8,5 @@ public interface KeyService {
     KeyEntity addKey(String keyName, UUID typeId);
 
     KeyEntity editKey(String keyName, UUID keyId);
+    KeyEntity deleteKey(UUID keyId);
 }
