@@ -1,13 +1,22 @@
 package mmtr.web.db.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "key", schema = "public", catalog = "dict")
-public class KeyEntity extends BaseEntity{
+public class KeyEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
+
+    @Basic
+    @Column(name = "type_id")
+    private UUID typeId;
 
     public String getName() {
         return name;
@@ -35,5 +44,13 @@ public class KeyEntity extends BaseEntity{
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
+    }
+
+    public UUID getTypeId() {
+        return typeId;
+    }
+
+    public void setTypeId(UUID typeId) {
+        this.typeId = typeId;
     }
 }

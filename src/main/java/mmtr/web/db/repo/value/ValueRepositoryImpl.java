@@ -1,5 +1,6 @@
 package mmtr.web.db.repo.value;
 
+import jakarta.persistence.NoResultException;
 import mmtr.web.db.HibernateUtil;
 import mmtr.web.db.entity.ValueEntity;
 import org.hibernate.Session;
@@ -24,10 +25,28 @@ public class ValueRepositoryImpl implements ValueRepository {
 
         session.beginTransaction();
 
-        List<ValueEntity> result = session.createQuery("from ValueEntity as value inner join EntryEntity as entry on " +
-                        "entry.valueId = value.id where entry.keyId = :keyId", ValueEntity.class)
+        List<ValueEntity> result = session.createQuery("from ValueEntity where keyId = :keyId", ValueEntity.class)
                 .setParameter("keyId", keyId)
                 .getResultList();
+
+        session.getTransaction().commit();
+        session.close();
+
+        return result;
+    }
+
+    @Override
+    public List<ValueEntity> getValuesByName(String name) {
+        Session session = sessionFactory.openSession();
+
+        session.beginTransaction();
+        List<ValueEntity> result;
+        try {
+            result = session.createQuery("from ValueEntity where name like :name",
+                    ValueEntity.class).setParameter("name", "%" + name + "%").getResultList();
+        } catch (NoResultException ex) {
+            result = null;
+        }
 
         session.getTransaction().commit();
         session.close();

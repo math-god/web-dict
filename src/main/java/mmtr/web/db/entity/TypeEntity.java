@@ -11,6 +11,8 @@ public class TypeEntity extends BaseEntity {
     @Basic
     @Column(name = "name")
     private String name;
+    @Basic
+    @Column(name = "regex")
     private String regex;
 
     public String getName() {

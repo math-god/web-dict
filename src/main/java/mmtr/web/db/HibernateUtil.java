@@ -1,6 +1,5 @@
 package mmtr.web.db;
 
-import mmtr.web.db.entity.EntryEntity;
 import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
 import mmtr.web.db.entity.ValueEntity;
@@ -15,7 +14,7 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory() {
         try {
             return new Configuration().configure()
-                    .addAnnotatedClass(EntryEntity.class)
+
                     .addAnnotatedClass(KeyEntity.class)
                     .addAnnotatedClass(TypeEntity.class)
                     .addAnnotatedClass(ValueEntity.class)

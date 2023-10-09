@@ -7,7 +7,7 @@ import mmtr.web.db.entity.ValueEntity;
 import java.util.HashMap;
 import java.util.List;
 
-public class GetEntriesDto {
+public class DictionaryDto {
     private TypeEntity typeEntity;
 
     private HashMap<KeyEntity, List<ValueEntity>> pairs;

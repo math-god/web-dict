@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Entry page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
 <form th:action="@{/dictShow/getDictionaryByType}" method="get">
@@ -18,7 +19,7 @@
 
 <p th:text="${tableData.getTypeEntity().getName()}"></p>
 
-<table>
+<table id="table">
     <tr>
         <th>key</th>
         <th>values</th>
@@ -33,7 +34,76 @@
                 </tr>
             </table>
         </td>
+        <td>
+            <dialog id="deleteEntryDialog">
+                <form th:method="DELETE">
+                    <label>Are you sure?</label>
+                    <input type="submit" id="yes" value="Yes">
+                    <input type="submit" id="no" value="No">
+                </form>
+            </dialog>
+        </td>
     </tr>
 </table>
+
+<button id="openAddDialog">Add entry</button>
+<dialog id="addDialog">
+    <form th:action="@{/dictShow/addEntry}" th:object="${entry}" th:method="POST">
+
+        <input type="hidden" th:value="${tableData.getTypeEntity().getId()}" th:attr="name='typeId'">
+
+        <label for="key">Key</label>
+        <input type="text" id="key" name="key" th:field="*{key}">
+
+        <label for="value">Value</label>
+        <input type="text" id="value" name="value" th:field="*{value}">
+
+        <input type="submit" value="Add entry">
+    </form>
+    <br>
+    <button id="closeAddDialog">Close window</button>
+</dialog>
+
+<script type="text/javascript">
+    let table = document.getElementById("table");
+    let rows = table.rows;
+
+    for (let i = 1; i < rows.length; i++) {
+
+        let cols = rows[i].cells;
+        let lastCol = rows[i]['cells'][cols.length - 1];
+
+        // Create a new button element
+        let button = document.createElement('button');
+        button.innerText = 'Delete';
+
+        // Attach sayHi() function to 'onclick' attribute & pass row index
+        button.setAttribute('onclick', 'showDeleteDialog()')
+
+        // Append the button to the last column
+        lastCol.appendChild(button);
+    }
+
+    function showDeleteDialog() {
+        let deleteDialog = document.getElementById("deleteEntryDialog");
+
+        deleteDialog.show() ;
+    }
+
+
+    let addDialog = document.getElementById("addDialog");
+
+    document.querySelector(
+        "#openAddDialog"
+    ).onclick = function () {
+        addDialog.show();
+    };
+    document.querySelector(
+        "#closeAddDialog"
+    ).onclick = function () {
+        addDialog.close();
+    };
+
+</script>
 </body>
 </html>

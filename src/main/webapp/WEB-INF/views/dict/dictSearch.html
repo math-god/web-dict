@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+<form th:method="GET" th:action="@{/search/filterBy}">
+
+    <label for="typeId">Search in:</label><select class="form-control" id="typeId" name="typeId">
+    <option th:each="type : ${dictTypes}"
+            th:value="${type.getId()}"
+            th:text="${type.getName()}">
+    </option>
+    <option th:value="null"
+            th:text="ANY">
+    </option>
+</select>
+
+    <label for="kindOfInput">By:</label><select class="form-control" id="kindOfInput" name="kindOfInput">
+    <option th:value="value"
+            th:text="value">
+    </option>
+    <option th:value="key"
+            th:text="key">
+    </option>
+</select>
+
+    <label for="input">Input:</label><input
+        type="text" id="input" name="input">
+
+    <button type="submit">Search</button>
+</form>
+
+
+<table th:each="oneTable : ${tableData}">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td th:text="${oneTable.getTypeEntity().getName()}"></td>
+                </tr>
+                <tr>
+                    <th>key</th>
+                    <th>values</th>
+                </tr>
+
+                <tr th:each="tableRow : ${oneTable.getPairs()}">
+                    <td th:text="${tableRow.getKey().getName()}"></td>
+                    <td>
+                        <table>
+                            <tr th:each="values : ${tableRow.getValue()}">
+                                <td th:text="${values.getName()}"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+
+</body>
+</html>
