@@ -2,12 +2,14 @@ package mmtr.web.service.entry;
 
 import mmtr.web.common.AddEntryDto;
 import mmtr.web.common.GetEntriesDto;
+import mmtr.web.common.SearchDto;
 import mmtr.web.db.entity.EntryEntity;
 import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
 import mmtr.web.db.entity.ValueEntity;
 import mmtr.web.db.repo.base.BaseRepository;
 import mmtr.web.db.repo.entry.EntryRepository;
+import mmtr.web.db.repo.key.KeyRepository;
 import mmtr.web.db.repo.type.TypeRepository;
 import mmtr.web.db.repo.value.ValueRepository;
 import mmtr.web.service.key.KeyService;
@@ -24,15 +26,17 @@ public class EntryServiceImpl implements EntryService {
     private ValueRepository valueRepository;
     private BaseRepository baseRepository;
     private TypeRepository typeRepository;
+    private KeyRepository keyRepository;
     private KeyService keyService;
     private ValueService valueService;
 
     @Autowired
-    public EntryServiceImpl(EntryRepository entryRepository, ValueRepository valueRepository, BaseRepository baseRepository, TypeRepository typeRepository, KeyService keyService, ValueService valueService) {
+    public EntryServiceImpl(EntryRepository entryRepository, ValueRepository valueRepository, BaseRepository baseRepository, TypeRepository typeRepository, KeyRepository keyRepository, KeyService keyService, ValueService valueService) {
         this.entryRepository = entryRepository;
         this.valueRepository = valueRepository;
         this.baseRepository = baseRepository;
         this.typeRepository = typeRepository;
+        this.keyRepository = keyRepository;
         this.keyService = keyService;
         this.valueService = valueService;
     }
@@ -110,5 +114,54 @@ public class EntryServiceImpl implements EntryService {
         }
 
         return true;
+    }
+
+    @Override
+    public List<GetEntriesDto> getEntriesByFilter(SearchDto searchDto) {
+        List<GetEntriesDto> getEntriesDtos = new ArrayList<>();
+        if (searchDto.getKindOfInput().equals("value")) {
+            ValueEntity valueEntity = valueRepository.getValueByName(searchDto.getInput());
+            if (valueEntity == null)
+                return null;
+
+            List<EntryEntity> entryEntities = entryRepository.getEntriesByValueId(valueEntity.getId());
+
+            for (EntryEntity entryEntity : entryEntities) {
+                getEntriesDtos.add(getEntriesDtoFromEntryEntities(entryEntity));
+            }
+        }
+
+        if (searchDto.getKindOfInput().equals("key")) {
+            KeyEntity keyEntity = keyRepository.getKeyByName(searchDto.getInput());
+            if (keyEntity == null)
+                return null;
+
+            List<EntryEntity> entryEntities = entryRepository.getEntriesByKeyId(keyEntity.getId());
+
+            for (EntryEntity entryEntity : entryEntities) {
+                getEntriesDtos.add(getEntriesDtoFromEntryEntities(entryEntity));
+            }
+        }
+
+        if (searchDto.getTypeId() == null)
+            return getEntriesDtos;
+
+        return getEntriesDtos.stream().filter(c -> c.getTypeEntity().getId() == searchDto.getTypeId()).toList();
+    }
+
+    private GetEntriesDto getEntriesDtoFromEntryEntities(EntryEntity entryEntity) {
+        if (entryEntity == null)
+            return null;
+
+        HashMap<KeyEntity, List<ValueEntity>> pairs = new HashMap<>();
+        pairs.put(baseRepository.getById(KeyEntity.class, entryEntity.getKeyId()),
+                valueRepository.getValuesByKeyId(entryEntity.getKeyId()));
+
+        GetEntriesDto getEntriesDto = new GetEntriesDto();
+
+        getEntriesDto.setTypeEntity(baseRepository.getById(TypeEntity.class, entryEntity.getTypeId()));
+        getEntriesDto.setPairs(pairs);
+
+        return getEntriesDto;
     }
 }

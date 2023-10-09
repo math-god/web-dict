@@ -2,6 +2,7 @@ package mmtr.web.service.entry;
 
 import mmtr.web.common.AddEntryDto;
 import mmtr.web.common.GetEntriesDto;
+import mmtr.web.common.SearchDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,4 +19,5 @@ public interface EntryService {
     GetEntriesDto getEntriesByValueIdAndTypeId(UUID valueId, UUID typeId);
 
     List<GetEntriesDto> getEntriesByValueId(UUID valueId);
+    List<GetEntriesDto> getEntriesByFilter(SearchDto searchDto);
 }

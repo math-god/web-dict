@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface ValueRepository {
     List<ValueEntity> getValuesByKeyId(UUID keyId);
+    ValueEntity getValueByName(String name);
 }
