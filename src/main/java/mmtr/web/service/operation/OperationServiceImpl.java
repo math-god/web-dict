@@ -1,12 +1,15 @@
 package mmtr.web.service.operation;
 
 import mmtr.web.common.AddEntryDto;
+import mmtr.web.common.AddValueDto;
 import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
 import mmtr.web.db.entity.ValueEntity;
 import mmtr.web.db.repo.base.BaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service
 public class OperationServiceImpl implements OperationService {
@@ -37,9 +40,47 @@ public class OperationServiceImpl implements OperationService {
         valueEntity.setKeyId(resultKeyEntity.getId());
 
         ValueEntity resultValueEntity = baseRepository.create(valueEntity);
-        if (resultValueEntity == null)
+        return resultValueEntity != null;
+    }
+
+    @Override
+    public boolean addValue(AddValueDto addValueDto) {
+        ValueEntity valueEntity = new ValueEntity();
+        valueEntity.setName(addValueDto.getValueName());
+        valueEntity.setKeyId(addValueDto.getKeyId());
+
+        ValueEntity resultValueEntity = baseRepository.create(valueEntity);
+        return resultValueEntity != null;
+    }
+
+    @Override
+    public boolean deleteValue(UUID valueId) {
+        ValueEntity result = baseRepository.deleteById(ValueEntity.class, valueId);
+
+        return result != null;
+    }
+
+    @Override
+    public boolean editValue(UUID valueId, String valueName) {
+        ValueEntity valueEntity = baseRepository.getById(ValueEntity.class, valueId);
+        valueEntity.setName(valueName);
+
+        ValueEntity resultValueEntity = baseRepository.update(valueEntity);
+
+        return resultValueEntity != null;
+    }
+
+    @Override
+    public boolean editKey(UUID keyId, String keyName) {
+        KeyEntity keyEntity = baseRepository.getById(KeyEntity.class, keyId);
+
+        if (!keyName.matches(baseRepository.getById(TypeEntity.class, keyEntity.getTypeId()).getRegex()))
             return false;
 
-        return true;
+        keyEntity.setName(keyName);
+
+        KeyEntity resultKeyEntity = baseRepository.update(keyEntity);
+
+        return resultKeyEntity != null;
     }
 }

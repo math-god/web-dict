@@ -4,67 +4,199 @@
     <meta charset="UTF-8">
     <title>Entry page</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 <body>
-<form th:action="@{/dictShow/getDictionaryByType}" method="get">
-    <select class="form-control" id="typeId" name="typeId">
-        <option th:each="type : ${dictTypes}"
-                th:value="${type.getId()}"
-                th:text="${type.getName()}">
-        </option>
-    </select>
-    <button type="submit">Show</button>
-</form>
-<br>
-
-<p th:text="${tableData.getTypeEntity().getName()}"></p>
-
-<table id="table">
-    <tr>
-        <th>key</th>
-        <th>values</th>
-    </tr>
-
-    <tr th:each="tableRow : ${tableData.getPairs()}">
-        <td th:text="${tableRow.getKey().getName()}"></td>
-        <td>
-            <table>
-                <tr th:each="values : ${tableRow.getValue()}">
-                    <td th:text="${values.getName()}"></td>
-                </tr>
-            </table>
-        </td>
-        <td>
-            <dialog id="deleteEntryDialog">
-                <form th:method="DELETE">
-                    <label>Are you sure?</label>
-                    <input type="submit" id="yes" value="Yes">
-                    <input type="submit" id="no" value="No">
-                </form>
-            </dialog>
-        </td>
-    </tr>
-</table>
-
-<button id="openAddDialog">Add entry</button>
-<dialog id="addDialog">
-    <form th:action="@{/dictShow/addEntry}" th:object="${entry}" th:method="POST">
-
-        <input type="hidden" th:value="${tableData.getTypeEntity().getId()}" th:attr="name='typeId'">
-
-        <label for="key">Key</label>
-        <input type="text" id="key" name="key" th:field="*{key}">
-
-        <label for="value">Value</label>
-        <input type="text" id="value" name="value" th:field="*{value}">
-
-        <input type="submit" value="Add entry">
+<div>
+    <form th:action="@{/dictShow/getDictionaryByType}" method="get">
+        <select class="form-control" id="typeId" name="typeId">
+            <option th:each="type : ${dictTypes}"
+                    th:value="${type.getId()}"
+                    th:text="${type.getName()}">
+            </option>
+        </select>
+        <button type="submit">Show</button>
     </form>
     <br>
-    <button id="closeAddDialog">Close window</button>
-</dialog>
+
+    <p th:text="${tableData.getTypeEntity().getName()}"></p>
+
+    <table id="table" class="table table-bordered border-primary">
+        <tr>
+            <th>key</th>
+            <th>values</th>
+        </tr>
+
+        <tr th:each="tableRow : ${tableData.getPairs()}">
+            <td>
+                <table class="keyTable">
+                    <tr th:each="keys : ${tableRow.getKey()}">
+                        <td th:text="${keys.getName()}"></td>
+                        <td>
+                            <dialog id="editKeyDialog" class="editKeyDialog">
+                                <form th:action="@{/dictShow/editKey/{id}(id=${keys.getId()})}"
+                                      th:object="${editKey}"
+                                      th:method="POST">
+                                    <label for="keyName">Input:</label>
+                                    <input type="text" th:value="${keys.getName()}" id="keyName" name="keyName">
+                                    <input type="submit" id="editKey" value="Set">
+                                </form>
+                                <br>
+                                <button id="closeEditKeyDialog" class="closeEditKeyDialog">Close window</button>
+                            </dialog>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table class="valueTable">
+                    <tr th:each="values : ${tableRow.getValue()}">
+                        <td th:text="${values.getName()}"></td>
+                        <td>
+                            <dialog id="deleteValueDialog" class="deleteValueDialog">
+                                <form th:action="@{/dictShow/deleteValue/{id}(id=${values.getId()})}"
+                                      th:method="GET">
+                                    <label>Are you sure?</label>
+                                    <input type="submit" id="deleteValue" value="Yes">
+                                </form>
+                                <br>
+                                <button id="closeDeleteValueDialog" class="closeDeleteValueDialog">Close window</button>
+                            </dialog>
+                        </td>
+                        <td>
+                            <dialog id="editValueDialog" class="editValueDialog">
+                                <form th:action="@{/dictShow/editValue/{id}(id=${values.getId()})}"
+                                      th:object="${editValue}"
+                                      th:method="POST">
+                                    <label for="valueName">Input:</label>
+                                    <input type="text" th:value="${values.getName()}" id="valueName" name="valueName">
+                                    <input type="submit" id="editValue" value="Set">
+                                </form>
+                                <br>
+                                <button id="closeEditValueDialog" class="closeEditValueDialog">Close window</button>
+                            </dialog>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <dialog id="deleteEntryDialog">
+                    <form th:method="DELETE">
+                        <label>Are you sure?</label>
+                        <input type="submit" id="yes" value="Yes">
+                    </form>
+                    <br>
+                    <button id="closeDeleteEntryDialog">Close window</button>
+                </dialog>
+            </td>
+            <td>
+                <dialog id="addValueDialog" class="addValueDialog">
+                    <form th:action="@{/dictShow/addValue}" th:object="${value}" th:method="POST">
+                        <input id="keyIdAddValue" type="hidden" th:value="${tableRow.getKey().getId()}"
+                               th:attr="name='keyId'">
+                        <label for="valueText">Input</label>
+                        <input type="text" id="valueText" name="valueText" th:field="*{valueName}">
+                        <input type="submit" id="valueButton" value="Add">
+                    </form>
+                    <br>
+                    <button id="closeAddValueDialog" class="closeAddValueDialog">Close window</button>
+                </dialog>
+            </td>
+        </tr>
+    </table>
+
+    <button id="openAddDialog">Add entry</button>
+    <dialog id="addDialog">
+        <form th:action="@{/dictShow/addEntry}" th:object="${entry}" th:method="POST">
+
+            <input type="hidden" th:value="${tableData.getTypeEntity().getId()}" th:attr="name='typeId'">
+
+            <label for="key">Key</label>
+            <input type="text" id="key" name="key" th:field="*{key}">
+
+            <label for="value">Value</label>
+            <input type="text" id="value" name="value" th:field="*{value}">
+
+            <input type="submit" value="Add entry">
+        </form>
+        <br>
+        <button id="closeAddDialog">Close window</button>
+    </dialog>
+</div>
 
 <script type="text/javascript">
+
+    let keyTables = document.getElementsByClassName("keyTable");
+
+    let allKeyTablesLength = 0;
+    for (let keyTable of keyTables) {
+        let rows = keyTable.rows;
+
+        for (let i = 0; i < rows.length; i++) {
+
+            let cols = rows[i].cells;
+            let lastCol = rows[i]['cells'][cols.length - 1];
+
+            let editButton = document.createElement('button');
+
+            editButton.innerText = 'Edit key';
+
+            editButton.setAttribute('onclick', `showEditKeyDialog(${allKeyTablesLength})`);
+            allKeyTablesLength += 1;
+
+            console.log(allKeyTablesLength);
+            lastCol.appendChild(editButton);
+        }
+    }
+
+    function showEditKeyDialog(i) {
+        let editKeyDialog = document.getElementsByClassName("editKeyDialog");
+
+        editKeyDialog[i].show();
+    }
+
+
+    let valueTables = document.getElementsByClassName("valueTable");
+
+    let allValueTablesLength = 0;
+    for (let valueTable of valueTables) {
+        let rows = valueTable.rows;
+
+        for (let i = 0; i < rows.length; i++) {
+
+            let cols = rows[i].cells;
+            let lastCol = rows[i]['cells'][cols.length - 1];
+            let preLastCol = rows[i]['cells'][cols.length - 2];
+
+            let deleteButton = document.createElement('button');
+            let editButton = document.createElement('button');
+
+            deleteButton.innerText = 'Delete value';
+            editButton.innerText = 'Edit value';
+
+            deleteButton.setAttribute('onclick', `showDeleteValueDialog(${allValueTablesLength})`);
+            editButton.setAttribute('onclick', `showEditValueDialog(${allValueTablesLength})`);
+            allValueTablesLength += 1;
+
+            lastCol.appendChild(deleteButton);
+            preLastCol.appendChild(editButton);
+        }
+    }
+
+    function showDeleteValueDialog(i) {
+        let deleteDialog = document.getElementsByClassName("deleteValueDialog");
+
+        deleteDialog[i].show();
+    }
+
+    function showEditValueDialog(i) {
+        let editDialog = document.getElementsByClassName("editValueDialog");
+
+        editDialog[i].show();
+    }
+
+
     let table = document.getElementById("table");
     let rows = table.rows;
 
@@ -72,26 +204,38 @@
 
         let cols = rows[i].cells;
         let lastCol = rows[i]['cells'][cols.length - 1];
+        let preLastCol = rows[i]['cells'][cols.length - 2];
 
         // Create a new button element
-        let button = document.createElement('button');
-        button.innerText = 'Delete';
+        let deleteButton = document.createElement('button');
+        let addValueButton = document.createElement('button');
 
-        // Attach sayHi() function to 'onclick' attribute & pass row index
-        button.setAttribute('onclick', 'showDeleteDialog()')
+        deleteButton.innerText = 'Delete';
+        addValueButton.innerText = 'Add value';
 
-        // Append the button to the last column
-        lastCol.appendChild(button);
+        deleteButton.setAttribute('onclick', 'showDeleteDialog()')
+        addValueButton.setAttribute('onclick', `showAddValueDialog(${i - 1})`)
+
+        lastCol.appendChild(deleteButton);
+        preLastCol.appendChild(addValueButton);
     }
 
     function showDeleteDialog() {
         let deleteDialog = document.getElementById("deleteEntryDialog");
 
-        deleteDialog.show() ;
+        deleteDialog.show();
     }
 
+    function showAddValueDialog(i) {
+        let addValueDialog = document.getElementsByClassName("addValueDialog");
+        addValueDialog[i].show();
+    }
 
     let addDialog = document.getElementById("addDialog");
+    let addValueDialog = document.getElementsByClassName("addValueDialog");
+    let deleteValueDialog = document.getElementsByClassName("deleteValueDialog");
+    let editValueDialog = document.getElementsByClassName("editValueDialog");
+    let editKeyDialog = document.getElementsByClassName("editKeyDialog");
 
     document.querySelector(
         "#openAddDialog"
@@ -104,6 +248,49 @@
         addDialog.close();
     };
 
+    document.querySelectorAll(
+        ".closeAddValueDialog"
+    ).forEach((element) => {
+        element.onclick = function () {
+            for (let addValueDialogElement of addValueDialog) {
+                addValueDialogElement.close();
+            }
+        }
+    });
+
+    document.querySelectorAll(
+        ".closeDeleteValueDialog"
+    ).forEach((element) => {
+        element.onclick = function () {
+            for (let deleteValueDialogElement of deleteValueDialog) {
+                deleteValueDialogElement.close();
+            }
+        }
+    });
+
+    document.querySelectorAll(
+        ".closeEditValueDialog"
+    ).forEach((element) => {
+        element.onclick = function () {
+            for (let editValueDialogElement of editValueDialog) {
+                editValueDialogElement.close();
+            }
+        }
+    });
+
+    document.querySelectorAll(
+        ".closeEditKeyDialog"
+    ).forEach((element) => {
+        element.onclick = function () {
+            for (let editKeyDialogElement of editKeyDialog) {
+                editKeyDialogElement.close();
+            }
+        }
+    });
+
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 </html>
