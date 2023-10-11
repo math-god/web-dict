@@ -61,6 +61,13 @@ public class OperationServiceImpl implements OperationService {
     }
 
     @Override
+    public boolean deleteEntry(UUID keyId) {
+        KeyEntity result = baseRepository.deleteById(KeyEntity.class, keyId);
+
+        return result != null;
+    }
+
+    @Override
     public boolean editValue(UUID valueId, String valueName) {
         ValueEntity valueEntity = baseRepository.getById(ValueEntity.class, valueId);
         valueEntity.setName(valueName);

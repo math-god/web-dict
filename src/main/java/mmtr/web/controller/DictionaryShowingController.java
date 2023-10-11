@@ -97,6 +97,22 @@ public class DictionaryShowingController {
         return "redirect:" + ref;
     }
 
+    @GetMapping("/deleteEntry/{id}")
+    public String deleteEntryAjax(@PathVariable("id") UUID id,
+                                  @RequestHeader(value = HttpHeaders.REFERER, required = false) final String ref,
+                                  Model model) {
+        boolean result = operationService.deleteEntry(id);
+        model.addAttribute("result", result ? "Success" : "Invalid input data");
+
+        return "redirect:" + ref;
+    }
+
+
+    @ModelAttribute("tableData")
+    public DictionaryDto getTableData() {
+        return new DictionaryDto();
+    }
+
     @ModelAttribute("dictTypes")
     public List<TypeEntity> getDictTypes() {
         return searchService.getTypes();

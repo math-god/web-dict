@@ -11,8 +11,10 @@ public interface OperationService {
     boolean addValue(AddValueDto addValueDto);
 
     boolean deleteValue(UUID valueId);
+    boolean deleteEntry(UUID keyId);
 
     boolean editValue(UUID valueId, String valueName);
 
     boolean editKey(UUID keyId, String keyName);
+
 }
