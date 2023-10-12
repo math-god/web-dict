@@ -69,17 +69,4 @@ public class CrudRepository implements BaseRepository {
 
         return model;
     }
-
-    @Override
-    public <TModel extends BaseEntity> List<TModel> getListByQuery(Class<TModel> modelClass, String query) {
-        Session session = sessionFactory.openSession();
-
-        session.beginTransaction();
-        List<TModel> models = session.createQuery(query, modelClass).getResultList();
-
-        session.getTransaction().commit();
-        session.close();
-
-        return models;
-    }
 }

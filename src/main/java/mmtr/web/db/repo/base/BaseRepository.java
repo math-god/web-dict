@@ -14,7 +14,4 @@ public interface BaseRepository {
     <TModel extends BaseEntity> TModel getById(Class<TModel> modelClass, UUID id);
 
     <TModel extends BaseEntity> TModel deleteById(Class<TModel> modelClass, UUID id);
-
-    <TModel extends BaseEntity> List<TModel> getListByQuery(Class<TModel> modelClass, String query);
-
 }

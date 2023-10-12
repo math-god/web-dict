@@ -15,12 +15,12 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/dictShow")
-public class DictionaryShowingController {
+public class OperationController {
     private SearchService searchService;
     private OperationService operationService;
 
     @Autowired
-    public DictionaryShowingController(SearchService searchService, OperationService operationService) {
+    public OperationController(SearchService searchService, OperationService operationService) {
         this.searchService = searchService;
         this.operationService = operationService;
     }
@@ -39,8 +39,6 @@ public class DictionaryShowingController {
         return "dict/dictShow";
     }
 
-    //TODO Исключить дублирование ключей в одном и том же словаре
-    //TODO Исключить дублирование значений в одном и том же ключе
     @PostMapping("/addEntry")
     public String addEntry(@ModelAttribute("entry") AddEntryDto addEntryDto,
                            @RequestHeader(value = HttpHeaders.REFERER, required = false) final String ref,
