@@ -14,7 +14,6 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory() {
         try {
             return new Configuration().configure()
-
                     .addAnnotatedClass(KeyEntity.class)
                     .addAnnotatedClass(TypeEntity.class)
                     .addAnnotatedClass(ValueEntity.class)

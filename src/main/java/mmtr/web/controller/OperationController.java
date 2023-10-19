@@ -1,7 +1,9 @@
 package mmtr.web.controller;
 
 import mmtr.web.common.*;
+import mmtr.web.db.entity.KeyEntity;
 import mmtr.web.db.entity.TypeEntity;
+import mmtr.web.db.entity.ValueEntity;
 import mmtr.web.service.operation.OperationService;
 import mmtr.web.service.search.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -108,7 +111,11 @@ public class OperationController {
 
     @ModelAttribute("tableData")
     public DictionaryDto getTableData() {
-        return new DictionaryDto();
+        DictionaryDto dictionaryDto = new DictionaryDto();
+        dictionaryDto.setTypeEntity(new TypeEntity());
+        dictionaryDto.setPairs(new HashMap<KeyEntity, List<ValueEntity>>());
+
+        return dictionaryDto;
     }
 
     @ModelAttribute("dictTypes")
